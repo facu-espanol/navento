@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Navento — Desarrollo web e IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:   #0d0d0d;
+      --white:   #fafaf8;
+      --gray:    #f2f1ee;
+      --mid:     #888;
+      --accent:  #1a1a1a;
+      --border:  #e4e3df;
+      --radius:  4px;
+      --serif:   'Fraunces', Georgia, serif;
+      --sans:    'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--white);
+      color: var(--black);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(250,250,248,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s;
+    }
+    nav.scrolled { border-color: var(--border); }
+
+    .nav-logo {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 1.35rem;
+      letter-spacing: -.02em;
+      color: var(--black);
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: .85rem;
+      font-weight: 400;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--mid);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--black); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 8rem 3rem 5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-label {
+      font-size: .75rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp .6s .2s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 1.04;
+      letter-spacing: -.03em;
+      max-width: 14ch;
+      opacity: 0;
+      animation: fadeUp .7s .35s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .hero-sub {
+      margin-top: 2.5rem;
+      font-size: 1.05rem;
+      color: var(--mid);
+      max-width: 42ch;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp .7s .5s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 3rem;
+      opacity: 0;
+      animation: fadeUp .7s .65s forwards;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: .85rem 2rem;
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      font-size: .85rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-decoration: none;
+      border-radius: var(--radius);
+      transition: background .2s, transform .15s;
+    }
+    .btn:hover { background: #333; transform: translateY(-1px); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--black);
+      border: 1px solid var(--border);
+      margin-left: 1rem;
+    }
+    .btn-ghost:hover { background: var(--gray); }
+
+    /* ── SECTION BASE ── */
+    section { padding: 6rem 3rem; }
+    .section-label {
+      font-size: .72rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--mid);
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(2rem, 4vw, 3rem);
+      letter-spacing: -.025em;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-title em { font-style: italic; font-weight: 600; }
+    .section-body {
+      font-size: 1rem;
+      color: var(--mid);
+      max-width: 52ch;
+      font-weight: 300;
+    }
+
+    /* ── SERVICIOS ── */
+    #servicios { background: var(--gray); }
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1px;
+      margin-top: 3.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .servicio-card {
+      background: var(--white);
+      padding: 2.5rem 2rem;
+      transition: background .2s;
+    }
+    .servicio-card:hover { background: var(--black); }
+    .servicio-card:hover .servicio-icon,
+    .servicio-card:hover .servicio-title,
+    .servicio-card:hover .servicio-desc { color: var(--white); }
+
+    .servicio-icon {
+      font-size: 1.5rem;
+      margin-bottom: 1.25rem;
+      display: block;
+      transition: color .2s;
+    }
+    .servicio-title {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin-bottom: .75rem;
+      transition: color .2s;
+    }
+    .servicio-desc {
+      font-size: .9rem;
+      color: var(--mid);
+      font-weight: 300;
+      line-height: 1.6;
+      transition: color .2s;
+    }
+
+    /* ── PROYECTOS ── */
+    #proyectos {}
+    .proyectos-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    /*
+    ╔══════════════════════════════════════════════════════╗
+    ║  AGREGAR PROYECTOS: solo editá el array PROJECTS     ║
+    ║  abajo en el <script>. Cada objeto tiene:            ║
+    ║  - title: nombre del proyecto                        ║
+    ║  - client: cliente o empresa                         ║
+    ║  - type: tipo de trabajo (etiqueta)                  ║
+    ║  - url: enlace (o "" si no hay)                      ║
+    ║  - description: descripción breve                    ║
+    ║  - year: año                                         ║
+    ╚══════════════════════════════════════════════════════╝
+    */
+    .proyectos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .proyecto-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+      cursor: pointer;
+      background: var(--white);
+    }
+    .proyecto-card:hover {
+      border-color: var(--black);
+      box-shadow: 4px 4px 0 var(--black);
+      transform: translate(-2px, -2px);
+    }
+
+    .proyecto-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .proyecto-type {
+      font-size: .7rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      background: var(--gray);
+      padding: .3rem .75rem;
+      border-radius: 99px;
+    }
+    .proyecto-year {
+      font-size: .8rem;
+      color: var(--mid);
+    }
+    .proyecto-title {
+      font-family: var(--serif);
+      font-size: 1.3rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .proyecto-client {
+      font-size: .85rem;
+      color: var(--mid);
+      font-weight: 300;
+    }
+    .proyecto-desc {
+      font-size: .9rem;
+      color: #555;
+      font-weight: 300;
+      line-height: 1.55;
+      flex: 1;
+    }
+    .proyecto-link {
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      color: var(--black);
+      margin-top: .5rem;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .proyecto-link::after { content: '→'; }
+
+    /* ── PROCESO ── */
+    #proceso { background: var(--black); color: var(--white); }
+    #proceso .section-label { color: #666; }
+    #proceso .section-title { color: var(--white); }
+    #proceso .section-body { color: #888; }
+
+    .proceso-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-top: 3.5rem;
+      counter-reset: step;
+    }
+    .proceso-step {
+      counter-increment: step;
+      padding-top: 1.5rem;
+      border-top: 1px solid #333;
+    }
+    .proceso-step::before {
+      content: counter(step, decimal-leading-zero);
+      display: block;
+      font-size: .75rem;
+      color: #555;
+      letter-spacing: .1em;
+      margin-bottom: 1rem;
+    }
+    .proceso-step-title {
+      font-family: var(--serif);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--white);
+      margin-bottom: .5rem;
+    }
+    .proceso-step-desc {
+      font-size: .88rem;
+      color: #777;
+      font-weight: 300;
+      line-height: 1.55;
+    }
+
+    /* ── CONTACTO ── */
+    #contacto {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    @media (max-width: 700px) {
+      #contacto { grid-template-columns: 1fr; padding: 4rem 1.5rem; }
+    }
+
+    .contacto-info .section-title { margin-bottom: 1.5rem; }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+      margin-bottom: 1.5rem;
+    }
+    .contact-item span {
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    .contact-item a {
+      font-size: 1rem;
+      color: var(--black);
+      text-decoration: none;
+      font-weight: 400;
+    }
+    .contact-item a:hover { text-decoration: underline; }
+
+    .contacto-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: .4rem; }
+    .form-group label {
+      font-size: .75rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+    .form-group input,
+    .form-group textarea {
+      font-family: var(--sans);
+      font-size: .95rem;
+      padding: .9rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--white);
+      color: var(--black);
+      outline: none;
+      transition: border-color .2s;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--black); }
+    .form-group textarea { min-height: 130px; }
+
+    .form-submit {
+      margin-top: .5rem;
+      align-self: flex-start;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 3rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer p { font-size: .8rem; color: var(--mid); }
+    .footer-logo {
+      font-family: var(--serif);
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--black);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 700px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { padding: 7rem 1.5rem 4rem; }
+      section { padding: 4rem 1.5rem; }
+      footer { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <a class="nav-logo" href="#">Navento</a>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#proyectos">Proyectos</a></li>
+      <li><a href="#proceso">Proceso</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="hero-label">Desarrollo web · Automatizaciones con IA</p>
+    <h1 class="hero-title">Tu negocio, <em>más inteligente</em></h1>
+    <p class="hero-sub">
+      Construimos sitios WordPress de alto rendimiento y automatizaciones con inteligencia artificial que ahorran tiempo y multiplican resultados.
+    </p>
+    <div class="hero-cta">
+      <a href="#proyectos" class="btn">Ver proyectos</a>
+      <a href="#contacto" class="btn btn-ghost">Hablemos</a>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios">
+    <div class="reveal">
+      <p class="section-label">Qué hacemos</p>
+      <h2 class="section-title">Servicios que <em>funcionan</em></h2>
+      <p class="section-body">Combinamos diseño web profesional con automatizaciones inteligentes para que tu empresa trabaje sola mientras vos te enfocás en crecer.</p>
+    </div>
+    <div class="servicios-grid reveal">
+      <div class="servicio-card">
+        <span class="servicio-icon">⬡</span>
+        <h3 class="servicio-title">Sitios WordPress</h3>
+        <p class="servicio-desc">Diseño y desarrollo de sitios rápidos, seguros y fáciles de administrar. Desde landing pages hasta portales completos.</p>
+      </div>
+      <div class="servicio-card">
+        <span class="servicio-icon">◈</span>
+        <h3 class="servicio-title">Bots de WhatsApp con IA</h3>
+        <p class="servicio-desc">Automatizamos la atención al cliente, consultas y seguimiento de leads por WhatsApp usando inteligencia artificial.</p>
+      </div>
+      <div class="servicio-card">
+        <span class="servicio-icon">◎</span>
+        <h3 class="servicio-title">Automatizaciones</h3>
+        <p class="servicio-desc">Conectamos herramientas, eliminamos tareas manuales y construimos flujos que trabajan solos, 24/7.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROYECTOS -->
+  <section id="proyectos">
+    <div class="proyectos-header reveal">
+      <div>
+        <p class="section-label">Trabajo realizado</p>
+        <h2 class="section-title">Proyectos <em>recientes</em></h2>
+      </div>
+    </div>
+    <div class="proyectos-grid" id="proyectos-grid">
+      <!-- Las cards se generan desde el array PROJECTS en el <script> -->
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section id="proceso">
+    <div class="reveal">
+      <p class="section-label">Cómo trabajamos</p>
+      <h2 class="section-title">Un proceso <em>claro</em></h2>
+      <p class="section-body">Sin vueltas. Desde la primera charla hasta el lanzamiento.</p>
+    </div>
+    <div class="proceso-steps reveal">
+      <div class="proceso-step">
+        <h3 class="proceso-step-title">Diagnóstico</h3>
+        <p class="proceso-step-desc">Entendemos tu negocio, tus objetivos y qué herramientas tiene sentido usar.</p>
+      </div>
+      <div class="proceso-step">
+        <h3 class="proceso-step-title">Propuesta</h3>
+        <p class="proceso-step-desc">Presentamos solución, tiempos y presupuesto. Sin letra chica.</p>
+      </div>
+      <div class="proceso-step">
+        <h3 class="proceso-step-title">Desarrollo</h3>
+        <p class="proceso-step-desc">Construimos con revisiones periódicas. Vos ves el avance en tiempo real.</p>
+      </div>
+      <div class="proceso-step">
+        <h3 class="proceso-step-title">Lanzamiento</h3>
+        <p class="proceso-step-desc">Deploy, pruebas y entrega con capacitación incluida.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section>
+    <div id="contacto">
+      <div class="contacto-info reveal">
+        <p class="section-label">Hablemos</p>
+        <h2 class="section-title">¿Tenés un <em>proyecto</em>?</h2>
+        <p class="section-body" style="margin-bottom:2.5rem">Contanos qué necesitás y te respondemos en menos de 24 horas.</p>
+        <div class="contact-item">
+          <span>Email</span>
+          <!-- ✏️ Reemplazá con tu email real -->
+          <a href="mailto:hola@navento.com.ar">hola@navento.com.ar</a>
+        </div>
+        <div class="contact-item">
+          <span>WhatsApp</span>
+          <!-- ✏️ Reemplazá con tu número real -->
+          <a href="https://wa.me/5491100000000" target="_blank">+54 9 11 0000-0000</a>
+        </div>
+      </div>
+
+      <form class="contacto-form reveal" onsubmit="handleForm(event)">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" placeholder="Tu nombre" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="tu@email.com" required />
+        </div>
+        <div class="form-group">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" placeholder="Contanos un poco sobre tu proyecto..." required></textarea>
+        </div>
+        <button type="submit" class="btn form-submit">Enviar mensaje</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-logo">Navento</span>
+    <p>© <span id="year"></span> Navento. Hecho en Argentina 🇦🇷</p>
+  </footer>
+
+  <script>
+    /* ╔══════════════════════════════════════════════════════════╗
+       ║                  AGREGAR PROYECTOS AQUÍ                 ║
+       ║                                                          ║
+       ║  Para agregar un proyecto nuevo, copiá un bloque {}     ║
+       ║  y completá los campos. ¡Eso es todo!                   ║
+       ╚══════════════════════════════════════════════════════════╝ */
+    const PROJECTS = [
+      {
+        title: "Grupo Miras del Mar",
+        client: "Inmobiliaria",
+        type: "WordPress",
+        url: "https://grupomirasdelmar.com",
+        description: "Sitio institucional para desarrolladora inmobiliaria. Catálogo de propiedades, formularios de contacto y diseño a medida.",
+        year: "2024"
+      },
+      {
+        title: "Madryn Pública",
+        client: "Medio de comunicación",
+        type: "WordPress",
+        url: "https://madrynpublica.com",
+        description: "Portal de noticias con alto volumen de contenido. Optimización de velocidad, SEO y experiencia de lectura.",
+        year: "2024"
+      },
+      {
+        title: "Bot de atención al cliente",
+        client: "Desarrolladora inmobiliaria",
+        type: "Bot WhatsApp · IA",
+        url: "",
+        description: "Automatización completa de consultas por WhatsApp: clasificación de leads, respuestas automáticas y derivación al equipo de ventas.",
+        year: "2025"
+      }
+      /* ── NUEVO PROYECTO ──────────────────────────────────────────
+      ,{
+        title: "Nombre del proyecto",
+        client: "Nombre del cliente",
+        type: "WordPress / Bot WhatsApp · IA / Automatización",
+        url: "https://...",          // Dejá "" si no hay URL pública
+        description: "Descripción breve de qué se hizo y para qué.",
+        year: "2025"
+      }
+      ─────────────────────────────────────────────────────────── */
+    ];
+
+    /* ── Render de cards (no tocar) ── */
+    function renderProjects() {
+      const grid = document.getElementById('proyectos-grid');
+      grid.innerHTML = PROJECTS.map(p => {
+        const tag = p.url
+          ? `<a href="${p.url}" target="_blank" rel="noopener" class="proyecto-card">`
+          : `<div class="proyecto-card">`;
+        const endTag = p.url ? `</a>` : `</div>`;
+        return `
+          ${tag}
+            <div class="proyecto-meta">
+              <span class="proyecto-type">${p.type}</span>
+              <span class="proyecto-year">${p.year}</span>
+            </div>
+            <h3 class="proyecto-title">${p.title}</h3>
+            <p class="proyecto-client">${p.client}</p>
+            <p class="proyecto-desc">${p.description}</p>
+            ${p.url ? `<span class="proyecto-link">Ver proyecto</span>` : ''}
+          ${endTag}
+        `;
+      }).join('');
+    }
+    renderProjects();
+
+    /* ── Scroll nav border ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* ── Reveal on scroll ── */
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    /* ── Año dinámico en footer ── */
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* ── Form (placeholder — conectar a tu backend/formspree) ── */
+    function handleForm(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.textContent = '¡Enviado! Te contactamos pronto.';
+      btn.disabled = true;
+      btn.style.background = '#333';
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
